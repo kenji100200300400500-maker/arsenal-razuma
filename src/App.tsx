@@ -51,11 +51,14 @@ const categories: Category[] = [
 function App() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
 
-  if (selectedCategory) {
-    const category = categories.find(c => c.id === selectedCategory)
+  const selectedCategoryData = selectedCategory 
+    ? categories.find(c => c.id === selectedCategory)
+    : null
+
+  if (selectedCategoryData) {
     return (
       <CategoryView 
-        category={category!} 
+        category={selectedCategoryData} 
         onBack={() => setSelectedCategory(null)} 
       />
     )
@@ -73,15 +76,23 @@ function App() {
       <main className="main">
         <div className="categories-grid">
           {categories.map((category) => (
-            <div 
-              key={category.id} 
+            <button
+              key={category.id}
               className="category-card"
               onClick={() => setSelectedCategory(category.id)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  setSelectedCategory(category.id)
+                }
+              }}
+              type="button"
+              aria-label={`Открыть ${category.title}`}
             >
-              <div className="card-emoji">{category.emoji}</div>
+              <div className="card-emoji" aria-hidden="true">{category.emoji}</div>
               <h2 className="card-title">{category.title}</h2>
               <p className="card-description">{category.description}</p>
-            </div>
+            </button>
           ))}
         </div>
       </main>
