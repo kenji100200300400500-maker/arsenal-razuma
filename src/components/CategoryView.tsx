@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import { Category } from '../App'
-import { getCategoryData } from '../data/categoryData'
+import { getCategoryData, Item } from '../data/categoryData'
 
 interface CategoryViewProps {
   category: Category
@@ -8,6 +9,55 @@ interface CategoryViewProps {
 
 export default function CategoryView({ category, onBack }: CategoryViewProps) {
   const items = getCategoryData(category.id)
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null)
+
+  if (selectedItem) {
+    return (
+      <div className="item-detail-view">
+        <header className="item-detail-header">
+          <button 
+            className="back-button" 
+            onClick={() => setSelectedItem(null)}
+            type="button"
+            aria-label="Вернуться к списку"
+          >
+            ← Назад к списку
+          </button>
+        </header>
+
+        <main className="item-detail-content">
+          <div className="item-detail-wrapper">
+            <h1 className="item-detail-title">{selectedItem.title}</h1>
+            
+            <div className="detail-section">
+              <h2 className="detail-section-title">Описание</h2>
+              <p className="detail-text">{selectedItem.description}</p>
+            </div>
+
+            <div className="detail-section">
+              <h2 className="detail-section-title">Что это значит?</h2>
+              <p className="detail-text">{selectedItem.meaning}</p>
+            </div>
+
+            <div className="detail-section">
+              <h2 className="detail-section-title">Почему это важно?</h2>
+              <p className="detail-text">{selectedItem.why}</p>
+            </div>
+
+            <div className="detail-section">
+              <h2 className="detail-section-title">Пример</h2>
+              <p className="detail-text">{selectedItem.example}</p>
+            </div>
+
+            <div className="detail-section">
+              <h2 className="detail-section-title">Рефлексия</h2>
+              <p className="detail-question">{selectedItem.question}</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    )
+  }
 
   return (
     <div className="category-view">
@@ -36,11 +86,18 @@ export default function CategoryView({ category, onBack }: CategoryViewProps) {
           </div>
         ) : (
           <div className="items-list">
-            {items.map((item, index) => (
-              <div key={index} className="item-card">
+            {items.map((item) => (
+              <button
+                key={item.id}
+                className="item-card"
+                onClick={() => setSelectedItem(item)}
+                type="button"
+                aria-label={`Подробнее о ${item.title}`}
+              >
                 <h3 className="item-title">{item.title}</h3>
                 <p className="item-description">{item.description}</p>
-              </div>
+                <span className="item-expand-hint">Нажмите для подробнее →</span>
+              </button>
             ))}
           </div>
         )}
